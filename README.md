@@ -81,6 +81,38 @@ curl "http://127.0.0.1:8000/greet?name=Ana"
 
 Pulsa `Ctrl+C` en la terminal del contenedor para detenerlo.
 
+### Imagen distroless con multistage
+
+Para construir la alternativa distroless, selecciona `Dockerfile.distroless`:
+
+```bash
+docker build -f Dockerfile.distroless -t example-api:distroless .
+docker run --rm -p 127.0.0.1:8000:8000 example-api:distroless
+```
+
+La primera etapa utiliza `python:3.13-slim-trixie` para instalar las dependencias
+de `requirements.txt` en `/opt/python`. La etapa final utiliza
+`gcr.io/distroless/python3-debian13:nonroot` y copia únicamente esas dependencias
+y `app.py`, sin incorporar pip ni las herramientas de construcción.
+Ambas etapas usan Python 3.13 y Debian 13 para mantener la compatibilidad de
+las extensiones nativas. Consulta la [documentación de Distroless para Python](https://github.com/GoogleContainerTools/distroless/blob/main/python3/README.md).
+
+La API se ejecuta con Gunicorn como usuario sin privilegios en el puerto 8000.
+La imagen final no incluye shell; Gunicorn se inicia directamente mediante
+`python3 -m gunicorn`. Desde otra terminal, comprueba la API:
+
+```bash
+curl "http://127.0.0.1:8000/greet?name=Ana"
+# Hello Ana!
+```
+
+Pulsa `Ctrl+C` para detener el contenedor. Para comparar el tamaño de ambas
+imágenes después de construirlas:
+
+```bash
+docker image ls example-api
+```
+
 ## Tests
 
 `pytest` está declarado en el grupo de dependencias `dev`, que `uv sync`
