@@ -1,0 +1,18 @@
+[project]
+name = "example-api"
+version = "0.1.0"
+description = "API de ejemplo con Flask"
+requires-python = ">=3.12"
+dependencies = [
+    "flask>=3.1,<4",
+    "gunicorn>=23,<27",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8,<10",
+]
+
+[tool.uv]
+# La aplicación se utiliza exclusivamente en Linux.
+exclude-dependencies = ["colorama"]
