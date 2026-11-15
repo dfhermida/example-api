@@ -54,6 +54,33 @@ entorno virtual activado:
 gunicorn --bind 0.0.0.0:8000 app:app
 ```
 
+## Construir y ejecutar con Docker
+
+Con Docker instalado, ejecuta desde el directorio del proyecto para construir
+la imagen a partir del `Dockerfile`:
+
+```bash
+docker build -t example-api .
+```
+
+La imagen utiliza `python:3.13-slim` en una única etapa e instala las dependencias
+de `requirements.txt`. La API se ejecuta con Gunicorn como usuario sin privilegios.
+
+Para iniciar el contenedor y publicar el puerto 8000 en la máquina local:
+
+```bash
+docker run --rm -p 127.0.0.1:8000:8000 example-api
+```
+
+Desde otra terminal, comprueba la API:
+
+```bash
+curl "http://127.0.0.1:8000/greet?name=Ana"
+# Hello Ana!
+```
+
+Pulsa `Ctrl+C` en la terminal del contenedor para detenerlo.
+
 ## Tests
 
 `pytest` está declarado en el grupo de dependencias `dev`, que `uv sync`
